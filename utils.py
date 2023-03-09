@@ -1,4 +1,5 @@
 from .settings import *
+import re
 
 def forword_strip(keyword,target,delim):
         split_target = str(target).lower().split(delim)
@@ -52,8 +53,8 @@ def split_search(keyword,target,delim):
                         if(str(word).strip() in split_keyword):
                             # print(word, split_keyword)
                             word_match.append({
-                                'keyword':split_keyword,
-                                'target':word
+                                'Keyword':split_keyword,
+                                'Target':word
                             })
                             match_count += 1
                     else:
@@ -61,30 +62,30 @@ def split_search(keyword,target,delim):
                             # print("Single")
                             # print(split_target[j], split_keyword)
                             word_match.append({
-                                'keyword':split_keyword,
-                                'target':split_target[j].strip()
+                                'Keyword':split_keyword,
+                                'Target':split_target[j].strip()
                             })
                             match_count += 1
                         elif(split_target[j].strip() in split_keyword and len(split_target[j])>=3):
                             # print(split_target[j], split_keyword)
                             word_match.append({
-                                'keyword':split_keyword,
-                                'target':split_target[j].strip()
+                                'Keyword':split_keyword,
+                                'Target':split_target[j].strip()
                             })
                             match_count += 1
                 except Exception as e:
                     if(split_target[j].strip() in split_keyword and len(split_keyword)==1):
                         # print(split_target[j], split_keyword)
                         word_match.append({
-                                'keyword':split_keyword,
-                                'target':split_target[j].strip()
+                                'Keyword':split_keyword,
+                                'Target':split_target[j].strip()
                             })
                         match_count += 1
                     if(split_target[j].strip() in split_keyword and len(split_target[j])>=3):
                         # print(split_target[j], split_keyword)
                         word_match.append({
-                                'keyword':split_keyword,
-                                'target':split_target[j].strip()
+                                'Keyword':split_keyword,
+                                'Target':split_target[j].strip()
                             })
                         match_count += 1
             keyword = str(keyword).rstrip(',')
@@ -95,11 +96,19 @@ def split_search(keyword,target,delim):
                     if(word in str(target).lower()):
                         # print(word, target)
                         word_match.append({
-                                'keyword':word,
-                                'target':target
+                                'Keyword':word,
+                                'Target':target
                             })
                         match_count += 1
         
         if(match_count >= 1):
+            # new_keyword = ",".join(keyword)
             return make_response(True,Algorithms.SPLIT_SEARCH,keyword,target,match_count,word_match)
         return make_response(False,Algorithms.SPLIT_SEARCH,keyword,target)
+
+
+def contains_match(keyword,target):
+    if(keyword in target):
+        return make_response(True,Algorithms.CONTAINS_MATCH,keyword,target)
+    else:
+        return make_response(False,Algorithms.CONTAINS_MATCH,keyword,target)
