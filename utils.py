@@ -109,6 +109,10 @@ def split_search(keyword,target,delim):
 
 def contains_match(keyword,target):
     if(keyword in target):
-        return make_response(True,Algorithms.CONTAINS_MATCH,keyword,target)
+        word_match = [{
+            'Keyword':target,
+            'Target':keyword
+        }]
+        return make_response(True,Algorithms.CONTAINS_MATCH,keyword,target,0,word_match)
     else:
         return make_response(False,Algorithms.CONTAINS_MATCH,keyword,target)
