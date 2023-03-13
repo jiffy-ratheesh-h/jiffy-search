@@ -49,6 +49,8 @@ class SearchAlgorithms:
         new_target = self.target.lower()
         for delim in Config.SPECIAL_CHARACTERS:
             split_status = split_search(new_keyword,new_target,delim)
+            # if(split_status['status'] == False):
+            #     split_status = split_search(new_target,new_keyword,delim)
             if(split_status['status'] == True):
                 return split_status
         return split_status

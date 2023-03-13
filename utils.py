@@ -1,4 +1,5 @@
 from .settings import *
+from ._helper import *
 import re
 
 def forword_strip(keyword,target,delim):
@@ -39,73 +40,74 @@ def backword_strp(keyword,target,delim):
                         return make_response(True,Algorithms.BACKWARD_SEARCH,keyword,string_target)
         return make_response(False,Algorithms.BACKWARD_SEARCH,keyword,target)
 
-def split_search(keyword,target,delim):
-        word_match = []
-        split_target = str(target).lower().split(delim)
-        for i in range(0,len(Config.SPECIAL_CHARACTERS)):
-            match_count = 0
-            delim1=Config.SPECIAL_CHARACTERS[i]
-            split_keyword = str(keyword).lower().split(delim1)
-            for j in range(0,len(split_target)):
-                try:
-                    if(len(split_target[j+1]) == 1):
-                        word = str(split_target[j])+str(split_target[j+1])
-                        if(str(word).strip() in split_keyword):
-                            # print(word, split_keyword)
-                            word_match.append({
-                                'Keyword':split_keyword,
-                                'Target':word
-                            })
-                            match_count += 1
-                    else:
-                        if(split_target[j].strip() in split_keyword and len(split_keyword)==1):
-                            # print("Single")
-                            # print(split_target[j], split_keyword)
-                            word_match.append({
-                                'Keyword':split_keyword,
-                                'Target':split_target[j].strip()
-                            })
-                            match_count += 1
-                        elif(split_target[j].strip() in split_keyword and len(split_target[j])>=3):
-                            # print(split_target[j], split_keyword)
-                            word_match.append({
-                                'Keyword':split_keyword,
-                                'Target':split_target[j].strip()
-                            })
-                            match_count += 1
-                except Exception as e:
-                    if(split_target[j].strip() in split_keyword and len(split_keyword)==1):
-                        # print(split_target[j], split_keyword)
-                        word_match.append({
-                                'Keyword':split_keyword,
-                                'Target':split_target[j].strip()
-                            })
-                        match_count += 1
-                    if(split_target[j].strip() in split_keyword and len(split_target[j])>=3):
-                        # print(split_target[j], split_keyword)
-                        word_match.append({
-                                'Keyword':split_keyword,
-                                'Target':split_target[j].strip()
-                            })
-                        match_count += 1
-            keyword = str(keyword).rstrip(',')
-        for item in Config.SPLIT_DELIMITTER:
-            if(item in keyword):
-                new_keyword = str(keyword).lower().split(item)
-                for word in new_keyword:
-                    if(word in str(target).lower()):
-                        # print(word, target)
-                        word_match.append({
-                                'Keyword':word,
-                                'Target':target
-                            })
-                        match_count += 1
-        
-        if(match_count >= 1):
-            # new_keyword = ",".join(keyword)
-            return make_response(True,Algorithms.SPLIT_SEARCH,keyword,target,match_count,word_match)
-        return make_response(False,Algorithms.SPLIT_SEARCH,keyword,target)
 
+def split_search(keyword,target,delim):
+    keyword_clubbing = club_line_name(keyword)
+    # print("keyword_clubbing",keyword_clubbing)
+    target_clubbing = club_line_name(target)
+    # print("target_clubbing",target_clubbing)
+    keyword = str(keyword).split(delim)
+    target = str(target).split(delim)
+    respnse = {'status':False}
+    if(len(keyword) == 1):
+        # print("Keyword Length = 1")
+        respnse = check_exact_match(keyword,target)
+    elif(len(keyword) == 2):
+        # print("Keyword Length = 2")
+        if(len(keyword[1]) ==1):
+            keyword = ["".join(keyword)]
+            respnse  = check_exact_match(keyword,target)
+            # print(respnse)
+            # print("\n\n=\n")
+    elif(len(keyword) == 3):
+        # print("Keyword Length = 3")
+        if(len(keyword[2]) >=3):
+            new_keyword = ["".join(keyword)]
+            # print(new_keyword)
+            respnse  = check_exact_match(new_keyword,target)
+            if(respnse['status'] == False):
+                respnse  = check_exact_match(keyword,target)
+                if(respnse['status'] != False):
+                    if(respnse['match_count'] == 1):
+                        return make_response(False,Algorithms.SPLIT_SEARCH," ".join(keyword)," ".join(target),respnse['match_count'],respnse['word_match'])
+    match_count = 0
+    if(respnse['status'] == False):
+        word_match = []
+        if(keyword_clubbing != False):
+            # print("Keyword Clubbing")
+            for item in keyword_clubbing:
+                item = [item]
+                # print(item)
+                # print(target)
+                respnse = check_exact_match(item,target)
+                if(respnse['status'] != False):
+                    word_match.append({
+                        'Keyword':item,
+                        'Target':target
+                    })
+                    match_count += 1
+        # print("match_count",match_count)
+        if(match_count == 0 and target_clubbing != False):
+            # print("Target Clubbing")
+            for item in target_clubbing:
+                item = [item]
+                # print(item)
+                # print(keyword)
+                respnse = check_exact_match(keyword,item)
+                if(respnse['status'] != False):
+                    word_match.append({
+                        'Keyword':keyword,
+                        'Target':item
+                    })
+                    match_count += 1
+        if(match_count >= 1):
+            # print(match_count)
+            return make_response(True,Algorithms.SPLIT_SEARCH," ".join(keyword)," ".join(target),match_count,word_match)
+        else:
+            return check_exact_match(keyword,target)
+    else:
+        return respnse
+    
 
 def contains_match(keyword,target):
     if(keyword in target):
@@ -113,6 +115,6 @@ def contains_match(keyword,target):
             'Keyword':target,
             'Target':keyword
         }]
-        return make_response(True,Algorithms.CONTAINS_MATCH,keyword,target,0,word_match)
+        return make_response(True,Algorithms.CONTAINS_MATCH,keyword,target,1,word_match)
     else:
         return make_response(False,Algorithms.CONTAINS_MATCH,keyword,target)
