@@ -59,8 +59,8 @@ def split_search(keyword,target,delim):
             respnse  = check_exact_match(keyword,target)
             # print(respnse)
             # print("\n\n=\n")
-    elif(len(keyword) == 3):
-        # print("Keyword Length = 3")
+    elif(len(keyword) >= 3):
+        # print("Keyword Length >= 3")
         if(len(keyword[2]) >=3):
             new_keyword = ["".join(keyword)]
             # print(new_keyword)
@@ -69,17 +69,20 @@ def split_search(keyword,target,delim):
                 respnse  = check_exact_match(keyword,target)
                 if(respnse['status'] != False):
                     if(respnse['match_count'] == 1):
-                        return make_response(False,Algorithms.SPLIT_SEARCH," ".join(keyword)," ".join(target),respnse['match_count'],respnse['word_match'])
+                        return make_response(True,Algorithms.SPLIT_SEARCH," ".join(keyword)," ".join(target),respnse['match_count'],respnse['word_match'])
     match_count = 0
     if(respnse['status'] == False):
         word_match = []
         if(keyword_clubbing != False):
             # print("Keyword Clubbing")
             for item in keyword_clubbing:
-                item = [item]
-                # print(item)
-                # print(target)
-                respnse = check_exact_match(item,target)
+                new_keyword = [item.strip()]
+                # print("Target = ",item)
+                # print("Keyword = ",keyword)
+                respnse = check_exact_match(new_keyword,target)
+                if(respnse['status'] == False and " " in item):
+                    new_keyword = [item.replace(" ","").strip()]
+                    respnse = check_exact_match(new_keyword,target)
                 if(respnse['status'] != False):
                     word_match.append({
                         'Keyword':item,
@@ -90,20 +93,24 @@ def split_search(keyword,target,delim):
         if(match_count == 0 and target_clubbing != False):
             # print("Target Clubbing")
             for item in target_clubbing:
-                item = [item]
-                # print(item)
-                # print(keyword)
-                respnse = check_exact_match(keyword,item)
+                new_target = [item.strip()]
+                # print("Target = ",item)
+                # print("Keyword = ",keyword)
+                respnse = check_exact_match(keyword,new_target)
+                if(respnse['status'] == False):
+                    new_target = [item.replace(" ","").strip()]
+                    respnse = check_exact_match(keyword,new_target)
                 if(respnse['status'] != False):
                     word_match.append({
                         'Keyword':keyword,
-                        'Target':item
+                        'Target':new_target
                     })
                     match_count += 1
         if(match_count >= 1):
             # print(match_count)
             return make_response(True,Algorithms.SPLIT_SEARCH," ".join(keyword)," ".join(target),match_count,word_match)
         else:
+            # print("Entered")
             return check_exact_match(keyword,target)
     else:
         return respnse

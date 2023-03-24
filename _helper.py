@@ -10,7 +10,7 @@ def check_exact_match(keyword,target):
     # print(target)
     for word in keyword:
         for placement in target:
-            if(len(word)>=3 and len(placement) >=3):
+            if(len(word)>=2 and len(placement) >=2):
                 if(word == placement):
                     # print("Word = ",word)
                     # print("Placement = ",placement)
