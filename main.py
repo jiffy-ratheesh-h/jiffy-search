@@ -9,16 +9,20 @@ class CheckLineName:
      self.target = str(target).lower()
     def find_match(self):
         obj = SearchAlgorithms(self.keyword,self.target)
-        forward_status = obj.search_forward()
-        if(forward_status['status'] == False):
-            backward_status = obj.search_backward()
-            if(backward_status['status'] == False):
-                split_status = obj.search_split()
-                return split_status            
+        exact_status = obj.search_exact()
+        if(exact_status['status'] == False):
+            forward_status = obj.search_forward()
+            if(forward_status['status'] == False):
+                backward_status = obj.search_backward()
+                if(backward_status['status'] == False):
+                    split_status = obj.search_split()
+                    return split_status            
+                else:
+                    return backward_status
             else:
-                return backward_status
+                return forward_status
         else:
-            return forward_status
+            return exact_status
     
 
 class SearchAlgorithms:
@@ -60,5 +64,26 @@ class SearchAlgorithms:
         new_target = self.target.lower()
         contains_status = contains_match(new_keyword,new_target)
         return contains_status
+    
+    def search_in_list(self):
+        new_keyword = self.keyword.lower()
+        new_target = self.target.lower()
+        exact_status = search_list(new_keyword,new_target)
+        return exact_status
+    
+    def search_exact(self):
+        new_keyword = self.keyword.lower()
+        new_target = self.target.lower()
+        word_match = []
+        # print(new_keyword,new_target)
+        if(new_keyword == new_target):
+            word_match.append({
+                'Keyword':new_keyword,
+                'Target':new_target
+            })
+            return make_response(True,Algorithms.EXACT_MATCH,new_keyword,new_target,len(word_match),word_match)
+        else:
+            return make_response(False,Algorithms.EXACT_MATCH,new_keyword,new_target)
+
 
 

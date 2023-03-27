@@ -2,27 +2,43 @@ from .settings import *
 from ._helper import *
 import re
 
+
+def search_list(keyword,target):
+     respnse  = check_exact_match(keyword,target)
+     return respnse
+
 def forword_strip(keyword,target,delim):
         split_target = str(target).lower().split(delim)
+        word_match = []
         for i in range(len(split_target)):
             if(i == 0):
                 string_target = ' '.join(split_target)
                 if(keyword == string_target):
-                    return make_response(True,Algorithms.FORWARD_SEARCH,keyword,string_target)
+                    word_match.append({
+                        'Keyword':keyword,
+                        'Target':string_target
+                    })
             else:
                 x = i-1
                 if(x <= len(split_target)-1):
                     split_target.pop(0)
                     string_target = ' '.join(split_target)
                     if(keyword == string_target):
-                        return make_response(True,Algorithms.FORWARD_SEARCH,keyword,string_target)
-        return make_response(False,Algorithms.FORWARD_SEARCH,keyword,string_target)
+                        word_match.append({
+                            'Keyword':keyword,
+                            'Target':string_target
+                        })
+        if(len(word_match) >= 1):
+            return make_response(True,Algorithms.FORWARD_SEARCH,keyword,string_target,len(word_match),word_match)
+        else:
+            return make_response(False,Algorithms.FORWARD_SEARCH,keyword,string_target)
 
 
 def backword_strp(keyword,target,delim):
         target = str(target).strip()
         split_target = str(target).lower().split(delim)
         keyword = str(keyword).strip()
+        word_match = []
         for i in range(len(split_target)):
             if(len(split_target)>=1):
                 if(i == 0):
@@ -30,15 +46,24 @@ def backword_strp(keyword,target,delim):
                     string_target = str(string_target).strip()
                     # print(string_target,keyword)
                     if(keyword == string_target):
-                        return make_response(True,Algorithms.BACKWARD_SEARCH,keyword,string_target)
+                        word_match.append({
+                            'Keyword':keyword,
+                            'Target':string_target
+                        })
                 else:
                     split_target.pop(-1)
                     string_target = ' '.join(split_target)
                     string_target = str(string_target).strip()
                     # print(string_target,keyword)
                     if(keyword == string_target):
-                        return make_response(True,Algorithms.BACKWARD_SEARCH,keyword,string_target)
-        return make_response(False,Algorithms.BACKWARD_SEARCH,keyword,target)
+                        word_match.append({
+                            'Keyword':keyword,
+                            'Target':string_target
+                        })
+        if(len(word_match) >= 1):
+            return make_response(True,Algorithms.BACKWARD_SEARCH,keyword,string_target,len(word_match),word_match)
+        else:
+            return make_response(False,Algorithms.BACKWARD_SEARCH,keyword,target)
 
 
 def split_search(keyword,target,delim):

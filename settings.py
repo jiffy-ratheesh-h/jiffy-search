@@ -12,6 +12,7 @@ class Algorithms:
     BACKWARD_SEARCH = "Backward Search"
     ABORTED = "Aborted Search"
     CONTAINS_MATCH = "Contains Match"
+    EXACT_MATCH = "Exact Match"
 
 def make_response(status,algorithm,keyword,target,match_count=0,word_match=None):
     return {
