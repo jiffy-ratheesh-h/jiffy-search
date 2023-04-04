@@ -45,6 +45,29 @@ def club_line_name(line_name):
         return new_line_split
     else:
         return False
+
+def club_three_line_name(line_name):
+    line_name_split = str(line_name).split(" ")
+    new_line_split = []
+    for i in range(len(line_name_split)-2):
+        if(len(line_name_split[i]) == 1):
+            try:
+                word = line_name_split[i-1] +line_name_split[i] + line_name_split[i+1]
+                new_line_split.append(word)
+            except:
+                pass
+        if(len(line_name_split[i]) >= 3 and len(line_name_split[i+1])>=1):
+            word = line_name_split[i] +line_name_split[i+1] +line_name_split[i+2]
+            new_line_split.append(word)
+            word = line_name_split[i] + " " + line_name_split[i+1] + " " + line_name_split[i+2]
+            new_line_split.append(word)
+        else:
+            word = line_name_split[i]+" " +line_name_split[i+1]
+            new_line_split.append(word)
+    if(len(new_line_split)>=1):
+        return new_line_split
+    else:
+        return False
     
 def check_line_name(keyword):
     for i in range(len(keyword)-1):
