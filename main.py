@@ -5,6 +5,8 @@ from .utils import *
 
 class CheckLineName:
     def __init__(self,keyword,target):
+     keyword = remove_spcl_characters(keyword)
+     target = remove_spcl_characters(target)
      self.keyword = str(keyword).lower()
      self.target = str(target).lower()
     def find_match(self):
@@ -27,6 +29,8 @@ class CheckLineName:
 
 class SearchAlgorithms:
     def __init__(self,keyword,target):
+     keyword = remove_spcl_characters(keyword)
+     keyword = remove_spcl_characters(keyword)
      self.keyword = str(keyword)
      self.target = str(target)
 

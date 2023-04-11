@@ -1,7 +1,12 @@
 from .settings import *
 
 
-
+def remove_spcl_characters(placement_name):
+    SPECIAL_CHARACTERS = ["`",'~','|','@','#','$','%','&','^','*','(',')','_','-',' ',',','-'," ","/",";",':',"\\","."]
+    placement_name = ''.join([i if ord(i) < 128 else ' ' for i in placement_name])
+    for delim in SPECIAL_CHARACTERS:
+        placement_name = str(placement_name.replace(delim," "))
+    return placement_name.replace("  "," ").strip()
 
 def check_exact_match(keyword,target):
     match_count = 0
