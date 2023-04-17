@@ -1,4 +1,5 @@
 from .settings import *
+import re
 
 
 def remove_spcl_characters(placement_name):
@@ -6,6 +7,10 @@ def remove_spcl_characters(placement_name):
     placement_name = ''.join([i if ord(i) < 128 else ' ' for i in placement_name])
     for delim in SPECIAL_CHARACTERS:
         placement_name = str(placement_name.replace(delim," "))
+    # nums = re.findall(r'\d{2,10}', str(placement_name))
+    # if(len(nums) >= 1):
+    #     for n in nums:
+    #         placement_name = str(placement_name).replace(n,'')
     return placement_name.replace("  "," ").strip()
 
 def check_exact_match(keyword,target):
